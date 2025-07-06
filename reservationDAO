@@ -1,0 +1,21 @@
+// package: agencevoyage.dao
+import model.Reservation;
+import java.sql.*;
+
+public class ReservationDAO {
+
+    public void insert(Reservation reservation) throws SQLException {
+        String sql = "INSERT INTO Reservation (confirmationDate, status, client_id, prestation_id) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDate(1, new java.sql.Date(reservation.getConfirmationDate().getTime()));
+            stmt.setString(2, reservation.getStatus().name());
+            stmt.setLong(3, reservation.getClient().getId());
+            stmt.setLong(4, reservation.getPrestation().getId());
+
+            stmt.executeUpdate();
+        }
+    }
+}
