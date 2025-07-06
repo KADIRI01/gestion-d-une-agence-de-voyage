@@ -1,0 +1,44 @@
+// package: agencevoyage.dao
+import model.Prestation;
+import java.sql.*;
+
+public class PrestationDAO {
+
+    public void insert(Prestation prestation) throws SQLException {
+        String sql = "INSERT INTO Prestation (designation, type, hotel_id, startDate, endDate, price, maxCapacity) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, prestation.getDesignation());
+            stmt.setString(2, prestation.getType());
+            stmt.setNull(3, Types.INTEGER); // Set to null unless hotel_id is available
+            stmt.setDate(4, new java.sql.Date(prestation.getStartDate().getTime()));
+            stmt.setDate(5, new java.sql.Date(prestation.getEndDate().getTime()));
+            stmt.setDouble(6, prestation.getPrice());
+            stmt.setInt(7, prestation.getMaxCapacity());
+
+            stmt.executeUpdate();
+
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                prestation.setId(rs.getLong(1));
+            }
+        }
+    }
+
+    public int getAvailablePlaces(long prestationId) throws SQLException {
+        String sql = "SELECT maxCapacity - COUNT(r.id) AS available FROM Prestation p LEFT JOIN Reservation r ON p.id = r.prestation_id WHERE p.id = ? AND r.status = 'CONFIRMED'";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, prestationId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("available");
+            }
+        }
+        return 0;
+    }
+}
