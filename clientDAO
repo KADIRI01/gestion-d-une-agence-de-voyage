@@ -1,0 +1,27 @@
+// package: agencevoyage.dao
+import model.Client;
+import java.sql.*;
+
+public class ClientDAO {
+
+    public void insert(Client client) throws SQLException {
+        String sql = "INSERT INTO Client (firstName, lastName, email, phone, isArchived) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, client.getFirstName());
+            stmt.setString(2, client.getLastName());
+            stmt.setString(3, client.getEmail());
+            stmt.setString(4, client.getPhone());
+            stmt.setBoolean(5, client.isArchived());
+
+            stmt.executeUpdate();
+
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                client.setId(rs.getLong(1));
+            }
+        }
+    }
+}
