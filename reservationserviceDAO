@@ -1,0 +1,33 @@
+// package: agencevoyage.service
+import agencevoyage.dao.*;
+import model.Reservation;
+import model.Prestation;
+import exception.NoAvailabilityException;
+
+public class ReservationService {
+
+    private PrestationDAO prestationDAO = new PrestationDAO();
+    private ReservationDAO reservationDAO = new ReservationDAO();
+    private ClientDAO clientDAO = new ClientDAO();
+
+    public void processReservation(Reservation reservation) throws NoAvailabilityException {
+        try {
+            // Insert client and prestation if needed
+            clientDAO.insert(reservation.getClient());
+            prestationDAO.insert(reservation.getPrestation());
+
+            int available = prestationDAO.getAvailablePlaces(reservation.getPrestation().getId());
+
+            if (available <= 0) {
+                throw new NoAvailabilityException("Plus de places disponibles pour: " + reservation.getPrestation().getDesignation());
+            }
+
+            reservation.confirm();
+            reservationDAO.insert(reservation);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new NoAvailabilityException("Erreur lors de la réservation");
+        }
+    }
+}
