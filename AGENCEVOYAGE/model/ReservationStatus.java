@@ -1,4 +1,4 @@
-package com.agencevoyage.model;
+package agencevoyage.model;
 
 public enum ReservationStatus {
     PENDING, CONFIRMED, CANCELLED
