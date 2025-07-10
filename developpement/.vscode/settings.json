@@ -1,0 +1,7 @@
+{
+    // Autorise VS Code à indexer les .jar JavaFX
+    "java.project.referencedLibraries": [
+      "lib/javafx-sdk-20/lib/*.jar"
+    ]
+  }
+  

@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Run JavaFX Main",
+        "type": "java",
+        "request": "launch",
+        "mainClass": "view.Main",
+        "vmArgs": "--module-path lib/javafx-sdk-20/lib --add-modules javafx.controls,javafx.fxml",
+        "classPaths": ["bin"]
+      }
+    ]
+  }
+  
